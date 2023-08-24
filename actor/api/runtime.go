@@ -13,10 +13,23 @@ limitations under the License.
 
 package api
 
+type ActorReentrancyConfig struct {
+	Enabled       bool `json:"enabled"`
+	MaxStackDepth int  `json:"maxStackDepth"`
+}
+
 type ActorRuntimeConfig struct {
-	RegisteredActorTypes   []string `json:"entities"`
-	ActorIdleTimeout       string   `json:"actorIdleTimeout"`
-	ActorScanInterval      string   `json:"actorScanInterval"`
-	DrainOngingCallTimeout string   `json:"drainOngoingCallTimeout"`
-	DrainBalancedActors    bool     `json:"drainRebalancedActors"`
+	RegisteredActorTypes      []string              `json:"entities"`
+	ActorIdleTimeout          string                `json:"actorIdleTimeout"`
+	ActorScanInterval         string                `json:"actorScanInterval"`
+	DrainOngingCallTimeout    string                `json:"drainOngoingCallTimeout"`
+	DrainBalancedActors       bool                  `json:"drainRebalancedActors"`
+	Reentrancy                ActorReentrancyConfig `json:"reentrancy,omitempty"`
+	RemindersStoragePartition int                   `json:"remindersStoragePartition"`
+	EntitiesConfig            []struct {
+		Entities                []string              `json:"entities"`
+		ActorIdleTimeout        string                `json:"actorIdleTimeout"`
+		DrainOngoingCallTimeout string                `json:"drainOngoingCallTimeout"`
+		Reentrancy              ActorReentrancyConfig `json:"reentrancy"`
+	} `json:"entitiesConfig,omitempty"`
 }
