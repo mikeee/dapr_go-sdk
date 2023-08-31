@@ -8,7 +8,7 @@ import (
 	"github.com/dapr/go-sdk/service/internal"
 )
 
-func TestTopicSubscripiton(t *testing.T) {
+func TestTopicSubscription(t *testing.T) {
 	t.Run("duplicate metadata", func(t *testing.T) {
 		sub := internal.NewTopicSubscription("test", "mytopic")
 		assert.NoError(t, sub.SetMetadata(map[string]string{
