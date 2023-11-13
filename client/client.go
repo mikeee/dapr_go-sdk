@@ -33,7 +33,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
-	"google.golang.org/protobuf/types/known/emptypb"
 
 	pb "github.com/dapr/dapr/pkg/proto/runtime/v1"
 
@@ -142,6 +141,8 @@ type Client interface {
 	// SubscribeConfigurationItems can subscribe the change of configuration items by storeName and keys, and return subscription id
 	SubscribeConfigurationItems(ctx context.Context, storeName string, keys []string, handler ConfigurationHandleFunction, opts ...ConfigurationOpt) (string, error)
 
+	// UnsubscribeConfigurationItems stops the subscription with target store's and ID.
+	// Deprecated: Closing the `SubscribeConfigurationItems` stream (closing the given context) will unsubscribe the client and should be used in favor of `UnsubscribeConfigurationItems`.
 	// UnsubscribeConfigurationItems can stop the subscription with target store's and id
 	UnsubscribeConfigurationItems(ctx context.Context, storeName string, id string, opts ...ConfigurationOpt) error
 
@@ -191,9 +192,6 @@ type Client interface {
 
 	// UnregisterActorReminder unregisters an actor reminder.
 	UnregisterActorReminder(ctx context.Context, req *UnregisterActorReminderRequest) error
-
-	// RenameActorReminder rename an actor reminder.
-	RenameActorReminder(ctx context.Context, req *RenameActorReminderRequest) error
 
 	// InvokeActor calls a method on an actor.
 	InvokeActor(ctx context.Context, req *InvokeActorRequest) (*InvokeActorResponse, error)
@@ -372,7 +370,7 @@ func (c *GRPCClient) withAuthToken(ctx context.Context) context.Context {
 
 // Shutdown the sidecar.
 func (c *GRPCClient) Shutdown(ctx context.Context) error {
-	_, err := c.protoClient.Shutdown(c.withAuthToken(ctx), &emptypb.Empty{})
+	_, err := c.protoClient.Shutdown(c.withAuthToken(ctx), &pb.ShutdownRequest{})
 	if err != nil {
 		return fmt.Errorf("error shutting down the sidecar: %w", err)
 	}
